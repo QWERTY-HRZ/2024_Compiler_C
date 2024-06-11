@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-// 包含Bison生成的头文件
+// 包含头文件
+#include "AST.h"
 #include "parser.tab.h"  
 
 %}
