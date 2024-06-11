@@ -29,7 +29,7 @@ void yyerror(char *s);
 /* 定义 - 非终结符数据类型，均为节点 */
 %type <ASTN> program
 %type <ASTN> function_definition
-%type <ASTN> Func_type
+/* %type <ASTN> Func_type */
 %type <ASTN> Ident_type
 %type <ASTN> Def_list
 %type <ASTN> Def_others
@@ -124,7 +124,7 @@ function_definition:
         $$ = NewNode_NT("function_definition"); 
         ASTNode *t = NewNode_Type("type", "int"); 
         addChild($$, t);
-        ASTNode *t = NewNode_Ident($2);
+        t = NewNode_Ident($2);
         addChild($$, t);
         // 对若产生式为空 填入空节点
         if($4 == NULL) {
@@ -138,7 +138,7 @@ function_definition:
         $$ = NewNode_NT("function_definition"); 
         ASTNode *t = NewNode_Type("type", "void"); 
         addChild($$, t);
-        ASTNode *t = NewNode_Ident($2);
+        t = NewNode_Ident($2);
         addChild($$, t);
         if($4 == NULL) {
             t = NewNode_NT("empty");
@@ -149,7 +149,7 @@ function_definition:
     }
     ;
 
-Func_type:
+/* Func_type:
     TOKEN_INT {
         $$ = NewNode_NT("Func_type");
         ASTNode *t = NewNode_Type("type", "int"); 
@@ -160,7 +160,7 @@ Func_type:
         ASTNode *t = NewNode_Type("type", "void"); 
         addChild($$, t);        
     }
-    ;
+    ; */
 
 Ident_type:
     TOKEN_INT {
@@ -235,7 +235,7 @@ statement:
     }
     | PRINT L_PAR Else_expression R_PAR SEMIC {
         $$ = NewNode_NT("statement");
-        ASTnode * t = NewNode_Type("keyword","print");
+        ASTNode * t = NewNode_Type("keyword","print");
         addChild($$, t);
 		addChild($$, $3);
     }
@@ -503,7 +503,7 @@ Call_list:
         $$ = NewNode_NT("Call_list");
         addChild($$, $1);
         if($2 == NULL) {
-            t = NewNode_NT("empty");
+            ASTNode *t = NewNode_NT("empty");
             addChild($$, t);
         }
         else addChild($$, $2);
@@ -516,7 +516,7 @@ Call_others:
         $$ = NewNode_NT("Call_others");
         addChild($$, $2);
         if($3 == NULL) {
-            t = NewNode_NT("empty");
+            ASTNode *t = NewNode_NT("empty");
             addChild($$, t);
         }
         else addChild($$, $3);        
