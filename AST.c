@@ -47,11 +47,10 @@ ASTNode* NewNode_OP(char* name){
 ASTNode* addChild(ASTNode* parent, ASTNode* child) {
     parent->children[parent->child_count] = child;
     parent->child_count++;
-    // test
-    printf("addChild! parent_type: %s, child_type: %s\n", parent->type, child->type);
-    if(strcmp(child->name, "")) printf("child_name: %s\n", child->name);
-    if(strcmp(child->type, "Const") == 0) printf("Const child_value: %d\n", child->value);
-
+    // // test
+    // printf("addChild! parent_type: %s, child_type: %s\n", parent->type, child->type);
+    // if(strcmp(child->name, "")) printf("child_name: %s\n", child->name);
+    // if(strcmp(child->type, "Const") == 0) printf("Const child_value: %d\n", child->value);
     return (parent);
 }
 
@@ -82,7 +81,7 @@ void AST_Traverse(ASTNode* root, int depth){
 		AST_Traverse(root->children[i],depth+1);
 	return ;
 }
-// 判断两字符串是否相等
-int Cmp_STR(char *str1, char *str2){
-    return (strcmp(str1, str2));
+
+int str_isEqual(char *str1, char *str2){
+    return (!strcmp(str1, str2));
 }

@@ -9,6 +9,7 @@
 int yylex(void);
 void yyerror(char *);
 void yyrestart(FILE *);
+
 %}
 
 /* 定义 - 数据类型集合 */
@@ -289,6 +290,19 @@ statement:
         addChild($$, t);
 		addChild($$, $3);
     }
+    | L_BRA statement R_BRA
+	{
+		$$ = NewNode_NT("statement");
+		ASTNode * t = NewNode_NT("new_block");
+		addchildren($$, t);
+		addchildren($$, $2);
+	}
+    | SEMIC
+	{
+		$$ = NewNode_NT("statement");
+		ASTNode * t = NewNode_NT("empty");
+		addchildren($$, t);
+	}
     ;
 
 Declaration:
@@ -568,23 +582,22 @@ int main(int argc, char** argv)
 	if (argc <= 1) return 1; 
     /* 读取文件 */
     FILE* f = fopen(argv[1], "r");
-     
-    if (!f) return 1; 
 	/* 将bison指向文件头 */
     yyrestart(f); 
+    /* 生成分析树 */
     yyparse();
-	/* AST_Traverse(Root, 0); */
+	AST_Traverse(Root, 0);
 	printf(".intel_syntax noprefix\n");
-	printf("\n.data\nformat_str:\n.asciz \"%%d\\n\"\n.extern printf\n");
-	/* if(strcmp(Root->type,"program")==0)
-		if(main_exsist(Root)==1)
-		{	
+	printf("\n
+            .data\nformat_str:\n
+            .asciz \"%%d\\n\"\n
+            .extern printf\n");
+	if(strcmp(Root->type,"program")==0)
+		if(main_exsist(Root) == 1) {	
 			printGlobalName(Root);
 			printf(".text\n\n");
 			func_define_list(Root);
 		}
-		else printf(".global main\n.text\n\n#ASTerror\nmain:\npush ebp\nmov ebp, esp\nsub esp, 4\nleave\nret\n");
-	else printf(".global main\n.text\n\n#ASTerror\nmain:\npush ebp\nmov ebp, esp\nsub esp, 4\nleave\nret\n"); */
     return 0; 
 }
 
