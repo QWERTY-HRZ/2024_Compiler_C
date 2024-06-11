@@ -6,7 +6,7 @@
 #include "AST.h"
 // #include "parser.tab.h"
 int yylex(void);
-void yyerror(char *text);
+void yyerror(char *s);
 %}
 
 /* 定义 - 数据类型集合 */
@@ -118,7 +118,7 @@ function_definition:
     Func_type IDENTIFIER L_PAR Def_list R_PAR L_BRA Statement R_BRA {
         $$ = NewNode_NT("function_definition"); 
         addChild($$, $1);
-        ASTnode *t = NewNode_Ident($2);
+        ASTNode *t = NewNode_Ident($2);
         addChild($$, t);
         // 跳过括号 大括号
         if($4 != NULL) addChild($$, $4);
@@ -129,12 +129,12 @@ function_definition:
 Func_type:
     TOKEN_INT {
         $$ = NewNode_NT("Func_type");
-        ASTnode *t = NewNode_Type("type", "int"); 
+        ASTNode *t = NewNode_Type("type", "int"); 
         addChild($$, t);
     }
     | TOKEN_VOID {
         $$ = NewNode_NT("Func_type");
-        ASTnode *t = NewNode_Type("type", "void"); 
+        ASTNode *t = NewNode_Type("type", "void"); 
         addChild($$, t);        
     }
     ;
@@ -143,7 +143,7 @@ Ident_type:
     TOKEN_INT {
         /* 变量数据类型 */
         $$ = NewNode_NT("Ident_type");
-        ASTnode *t = NewNode_Type("type", "int"); 
+        ASTNode *t = NewNode_Type("type", "int"); 
         addChild($$, t);
     }
     ;
@@ -153,7 +153,7 @@ Def_list:
     | Ident_type IDENTIFIER Def_others {
         $$ = NewNode_NT("Def_list");
         addChild($$, $1);
-        ASTnode *t = NewNode_Ident($2);
+        ASTNode *t = NewNode_Ident($2);
         addChild($$, t);
         if($3 != NULL) addChild($$, $3);
     }
@@ -164,7 +164,7 @@ Def_others:
     | COMMA Ident_type IDENTIFIER Def_others {
         $$ = NewNode_NT("Def_others");
         addChild($$, $2);
-        ASTnode *t = NewNode_Ident($3);
+        ASTNode *t = NewNode_Ident($3);
         addChild($$, t);
         if($4 != NULL) addChild($$, $4);
     }
@@ -209,7 +209,7 @@ Declaration:
         /* 变量声明语句 */
         $$ = NewNode_NT("Declaration");
         addChild($$, $1);
-        ASTnode *t = NewNode_Ident($2);
+        ASTNode *t = NewNode_Ident($2);
         addChild($$, t);
         if($3 != NULL) addChild($$, $3);
         if($4 != NULL) addChild($$, $4);                
@@ -220,7 +220,7 @@ Opt_init:
     {/* 初始化赋值，可为空 */}
     | ASSIGN Else_expression {
         $$ = NewNode_NT("Opt_init");
-        ASTnode *t = NewNode_OP("=");
+        ASTNode *t = NewNode_OP("=");
         addChild($$, t);
         addChild($$, $2);
     }
@@ -230,7 +230,7 @@ Ident_list:
     {/* 标识符列表，可为空 */}
     | COMMA IDENTIFIER Opt_init Ident_list {
         $$ = NewNode_NT("Ident_list");
-        ASTnode *t = NewNode_Ident($2);
+        ASTNode *t = NewNode_Ident($2);
         addChild($$, t);
         if($3 != NULL) addChild($$, $3);
         if($4 != NULL) addChild($$, $4);        
@@ -252,9 +252,9 @@ All_expression:
 Assignment_expression:
     IDENTIFIER ASSIGN All_expression SEMIC {
         $$ = NewNode_NT("Assignment_expression");
-        ASTnode *t = NewNode_Ident($1);
+        ASTNode *t = NewNode_Ident($1);
         addChild($$, t);
-        ASTnode *t = NewNode_OP("=");
+        ASTNode *t = NewNode_OP("=");
         addChild($$, t);
         addChild($$, $3);
     }
@@ -265,131 +265,131 @@ Else_expression:
         // 由于形式一样，之后操作都一样！
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP("||");
+        ASTNode *t = NewNode_OP("||");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression LOG_AND Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP("&&");
+        ASTNode *t = NewNode_OP("&&");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression BIT_OR Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP("|");
+        ASTNode *t = NewNode_OP("|");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression BIT_XOR Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP("^");
+        ASTNode *t = NewNode_OP("^");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression BIT_AND Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP("&");
+        ASTNode *t = NewNode_OP("&");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression LL Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP("<");
+        ASTNode *t = NewNode_OP("<");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression LE Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP("<=");
+        ASTNode *t = NewNode_OP("<=");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression GG Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP(">");
+        ASTNode *t = NewNode_OP(">");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression GE Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP(">=");
+        ASTNode *t = NewNode_OP(">=");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression EQ Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP("==");
+        ASTNode *t = NewNode_OP("==");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression NE Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP("!=");
+        ASTNode *t = NewNode_OP("!=");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression PLUS Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP("+");
+        ASTNode *t = NewNode_OP("+");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression MINUS Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP("-");
+        ASTNode *t = NewNode_OP("-");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression MUL Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP("*");
+        ASTNode *t = NewNode_OP("*");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression DIV Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP("/");
+        ASTNode *t = NewNode_OP("/");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression REG Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP("%");
+        ASTNode *t = NewNode_OP("%");
         addChild($$, t);
         addChild($$, $3);
     }
     | LOG_NOT Else_expression {
         $$ = NewNode_NT("Else_expression");
-        ASTnode *t = NewNode_OP("!");
+        ASTNode *t = NewNode_OP("!");
         addChild($$, t);
         addChild($$, $2);
     }
     | BIT_NOT Else_expression {
         $$ = NewNode_NT("Else_expression");
-        ASTnode *t = NewNode_OP("~");
+        ASTNode *t = NewNode_OP("~");
         addChild($$, t);
         addChild($$, $2);
     }
     | MINUS Else_expression %prec NEG {
         // 使用%prec 指定此时优先使用负号
         $$ = NewNode_NT("Else_expression");
-        ASTnode *t = NewNode_OP("-");
+        ASTNode *t = NewNode_OP("-");
         addChild($$, t);
         addChild($$, $2);
     }     
@@ -400,12 +400,12 @@ Else_expression:
     }
     | IDENTIFIER {
         $$ = NewNode_NT("Else_expression");
-        ASTnode *t = NewNode_Ident($1);
+        ASTNode *t = NewNode_Ident($1);
         addChild($$, t);
     }
     | CONSTANT {
         $$ = NewNode_NT("Else_expression");
-        ASTnode *t = NewNode_Const($1);
+        ASTNode *t = NewNode_Const($1);
         addChild($$, t);
     }
     | Function_call {
@@ -419,14 +419,14 @@ return_statement:
     TOKEN_RETURN All_expression SEMIC {
         // 其他返回语句
         $$ = NewNode_NT("return_statement");
-        ASTnode *t = NewNode_Type("keyword","return");
+        ASTNode *t = NewNode_Type("keyword","return");
         addChild($$, t);
         addChild($$, $2);
     }
     | TOKEN_RETURN SEMIC{
         // void返回语句
         $$ = NewNode_NT("return_statement");
-        ASTnode *t = NewNode_Type("keyword","return");
+        ASTNode *t = NewNode_Type("keyword","return");
         addChild($$, t);
     }
     ;
@@ -434,7 +434,7 @@ return_statement:
 Function_call:
     IDENTIFIER L_PAR Call_list R_PAR {
         $$ = NewNode_NT("Function_call");
-        ASTnode *t = NewNode_Ident($1);
+        ASTNode *t = NewNode_Ident($1);
         addChild($$, t);
         if($3 != NULL) addChild($$, $3);  
     }
@@ -485,6 +485,6 @@ int main(int argc, char** argv)
     return 0; 
 }
 
-void yyerror(const char *s) {
-    std::cerr << "Error: " << s << std::endl;
+void yyerror(char *s) {
+	fflush(stdout);
 }
