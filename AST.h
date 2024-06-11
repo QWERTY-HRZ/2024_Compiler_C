@@ -45,7 +45,7 @@ void AST_Traverse(ASTNode* root, int depth);
 // 判断两字符串是否相等 相等返回1 否则返回0
 int Str_isEqual(char *str1, char *str2);
 
-void printAST(ASTNode * root,int depth);
+
 int Ident_Count(ASTNode * statements_node);
 int Ident_Init(ASTNode * var_declare_list_node);
 int Ident_Lookup(char * name);

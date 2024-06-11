@@ -443,3 +443,14 @@ void Var_Assign(ASTNode * var_declare_list)
 int Str_isEqual(char *str1, char *str2){
     return (!strcmp(str1, str2));
 }
+
+void Pt_Global(ASTNode * program_node)
+{
+	ASTNode * func_define_node=program_node->children[0];
+	if(strcmp(func_define_node->type,"program")==0)
+	{
+		Pt_Global(func_define_node);
+		func_define_node=program_node->children[1];
+	}
+	printf(".global %s\n",func_define_node->children[1]->name);
+}

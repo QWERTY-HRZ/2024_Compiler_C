@@ -586,7 +586,7 @@ int main(int argc, char** argv)
     yyrestart(f); 
     /* 生成分析树 */
     yyparse();
-	AST_Traverse(Root, 0);
+	/* AST_Traverse(Root, 0); */
 	printf(".intel_syntax noprefix\n");
 	printf("\n
             .data\nformat_str:\n
@@ -594,9 +594,9 @@ int main(int argc, char** argv)
             .extern printf\n");
 	if(strcmp(Root->type,"program")==0)
 		if(main_exsist(Root) == 1) {	
-			printGlobalName(Root);
+			Pt_Global(Root);
 			printf(".text\n\n");
-			func_define_list(Root);
+			Deal_Func_Def(Root);
 		}
     return 0; 
 }
