@@ -5,6 +5,7 @@
 // 引入头文件
 #include "AST.h"
 #include "parser.tab.h"
+// 调用flex内置函数
 int yylex(void);
 void yyerror(char *);
 void yyrestart(FILE *);
@@ -104,6 +105,8 @@ void yyerror(char *s);
 program:
     function_definition {
         $$ = NewNode_NT("program");
+        // test
+        printf("function_def\n");        
         addChild($$, $1);
         Root = $$;       
     }
@@ -466,11 +469,13 @@ int main(int argc, char** argv)
 	Root = NewNode_NT("Root");
 	if (argc <= 1) return 1; 
     /* 读取文件 */
-        FILE* f = fopen(argv[1], "r"); 
-        if (!f) return 1;  
+    FILE* f = fopen(argv[1], "r");
+     
+    if (!f) return 1; 
 	/* 将bison指向文件头 */
-       yyrestart(f); 
-       yyparse(); 
+    yyrestart(f); 
+    yyparse();
+    printf("root_child = %d\n",Root->child_count);
 	AST_Traverse(Root, 0);
 	printf(".intel_syntax noprefix\n");
 	printf("\n.data\nformat_str:\n.asciz \"%%d\\n\"\n.extern printf\n");

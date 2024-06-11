@@ -43,11 +43,10 @@ ASTNode* NewNode_OP(char* name){
 
 // 添加子节点到某个节点
 ASTNode* addChild(ASTNode* parent, ASTNode* child) {
-    if (parent != NULL && child != NULL) {
-        // 不使用动态调整
-        parent->children[parent->child_count] = child;
-        parent->child_count++;
-    }
+    parent->children[parent->child_count] = child;
+    parent->child_count++;
+    // test
+    printf("addChild! parent_type: %s, child_type: %s\n", parent->type, child->type);
     return (parent);
 }
 
@@ -55,7 +54,7 @@ ASTNode* addChild(ASTNode* parent, ASTNode* child) {
 void AST_Traverse(ASTNode* root, int depth){
     for(int i=0;i<depth;i++)
 		printf("- ");
-	if(root==NULL)
+	if(root == NULL)
 	{
 		printf("EMPTY\n");
 		return ;
