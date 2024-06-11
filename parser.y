@@ -36,7 +36,7 @@ void yyerror(char *s);
 %type <ASTN> Statement
 %type <ASTN> statement
 %type <ASTN> Declaration
-%type <ASTN> Opt_init
+%type <ASTN> Ident_dec
 %type <ASTN> Ident_list
 %type <ASTN> All_expression
 %type <ASTN> Else_expression
@@ -235,52 +235,42 @@ statement:
     ;
 
 Declaration:
-    TOKEN_INT IDENTIFIER Opt_init Ident_list SEMIC {
+    TOKEN_INT Ident_list SEMIC {
         /* 变量声明语句 */
         $$ = NewNode_NT("Declaration");
         ASTNode *t = NewNode_Type("type","int");
-        addChild($$, t);
-        t = NewNode_Ident($2);
-        addChild($$, t);
-        if($3 == NULL) {
-            t = NewNode_NT("empty");
-            addChild($$, t);
-        }
-        else addChild($$, $3);
-        if($4 == NULL) {
-            t = NewNode_NT("empty");
-            addChild($$, t);
-        }
-        else addChild($$, $4);                
-    }
-    ;
-
-Opt_init:
-    {/* 初始化赋值，可为空 */}
-    | ASSIGN Else_expression {
-        $$ = NewNode_NT("Opt_init");
-        ASTNode *t = NewNode_OP("=");
         addChild($$, t);
         addChild($$, $2);
     }
     ;
 
 Ident_list:
-    {/* 标识符列表，可为空 */}
-    | COMMA IDENTIFIER Opt_init Ident_list {
+    Ident_list COMMA Ident_dec {
+        /* 声明列表 */
         $$ = NewNode_NT("Ident_list");
-        ASTNode *t = NewNode_Ident($2);
+        addChild($$, $1);
+        addChild($$, $3);
+    }
+    | Ident_dec {
+        $$ = NewNode_NT("Ident_list");
+        addChild($$, $1);       
+    }
+    ;
+
+Ident_dec:
+    IDENTIFIER ASSIGN Else_expression {
+        /* 单个标识符声明 */
+        $$ = NewNode_NT("Ident_dec");
+        ASTNode *t = NewNode_Ident($1);
         addChild($$, t);
-        if($3 == NULL) {
-            t = NewNode_NT("empty");
-            addChild($$, t);
-        }
-        else addChild($$, $3);
-        if($4 == NULL) {
-            t = NewNode_NT("empty");
-            addChild($$, t);
-        }
-        else addChild($$, $4);        
+        t = NewNode_OP("=");
+        addChild($$, t);
+        addChild($$, $3);
+    }
+    | IDENTIFIER {
+        $$ = NewNode_NT("Ident_dec");
+        ASTNode *t = NewNode_Ident($1);
+        addChild($$, t);        
     }
     ;
 
