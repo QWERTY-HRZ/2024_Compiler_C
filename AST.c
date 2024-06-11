@@ -50,6 +50,7 @@ ASTNode* addChild(ASTNode* parent, ASTNode* child) {
     // test
     printf("addChild! parent_type: %s, child_type: %s\n", parent->type, child->type);
     if(strcmp(child->name, "")) printf("child_name: %s\n", child->name);
+    if(strcmp(child->type, "Const") == 0) printf("Const child_value: %d\n", child->value);
 
     return (parent);
 }

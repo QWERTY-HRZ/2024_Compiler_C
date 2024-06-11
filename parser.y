@@ -42,9 +42,8 @@ void yyerror(char *s);
 %type <ASTN> Else_expression
 %type <ASTN> Assignment_expression
 %type <ASTN> return_statement
-%type <ASTN> Function_call
+/* %type <ASTN> Function_call */
 %type <ASTN> Call_list
-%type <ASTN> Call_others
 
 /* 定义 - 终结符数据类型 */
 /* 终结符 - 关键字 */
@@ -221,12 +220,8 @@ statement:
         $$ = NewNode_NT("statement");
         addChild($$, $1);
     }
-    | Function_call {
-        // 函数调用
-        $$ = NewNode_NT("statement");
-        addChild($$, $1);
-    }
     | PRINT L_PAR Else_expression R_PAR SEMIC {
+        // 调用printf
         $$ = NewNode_NT("statement");
         ASTNode * t = NewNode_Type("keyword","print");
         addChild($$, t);
@@ -445,10 +440,20 @@ Else_expression:
         ASTNode *t = NewNode_Const($1);
         addChild($$, t);
     }
-    | Function_call {
+    | IDENTIFIER L_PAR Call_list R_PAR {
         // 函数调用
+        // 由于不存在能单独使用的函数 将调用移至普通表达式中
         $$ = NewNode_NT("Else_expression");
-        addChild($$, $1);
+        ASTNode *t = NewNode_Ident($1);
+        addChild($$, t);
+        addChild($$, $3);  
+    }
+    | IDENTIFIER L_PAR R_PAR {
+        $$ = NewNode_NT("Else_expression");
+        ASTNode *t = NewNode_Ident($1);
+        addChild($$, t);
+        t = NewNode_NT("empty");
+        addChild($$, t);
     }
     ;
 
@@ -468,7 +473,7 @@ return_statement:
     }
     ;
 
-Function_call:
+/* Function_call:
     IDENTIFIER L_PAR Call_list R_PAR {
         $$ = NewNode_NT("Function_call");
         ASTNode *t = NewNode_Ident($1);
@@ -479,31 +484,17 @@ Function_call:
         }
         else addChild($$, $3);  
     }
-    ;
+    ; */
 
 Call_list:
-    {/* 调用参数列表，可为空 */}
-    | All_expression Call_others {
+    Call_list COMMA Else_expression {
         $$ = NewNode_NT("Call_list");
         addChild($$, $1);
-        if($2 == NULL) {
-            ASTNode *t = NewNode_NT("empty");
-            addChild($$, t);
-        }
-        else addChild($$, $2);
+        addChild($$, $3);
     }
-    ;
-
-Call_others:
-    {/* 调用其他参数，可为空 */}
-    | COMMA All_expression Call_others {
-        $$ = NewNode_NT("Call_others");
-        addChild($$, $2);
-        if($3 == NULL) {
-            ASTNode *t = NewNode_NT("empty");
-            addChild($$, t);
-        }
-        else addChild($$, $3);        
+    | Else_expression {
+        $$ = NewNode_NT("Call_list");
+        addChild($$, $1);
     }
     ;
 
