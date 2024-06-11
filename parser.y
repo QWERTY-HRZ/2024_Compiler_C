@@ -220,7 +220,7 @@ Opt_init:
     {/* 初始化赋值，可为空 */}
     | ASSIGN Else_expression {
         $$ = NewNode_NT("Opt_init");
-        ASTnode *t = NewNode_OP($1);
+        ASTnode *t = NewNode_OP("=");
         addChild($$, t);
         addChild($$, $2);
     }
@@ -254,7 +254,7 @@ Assignment_expression:
         $$ = NewNode_NT("Assignment_expression");
         ASTnode *t = NewNode_Ident($1);
         addChild($$, t);
-        ASTnode *t = NewNode_OP($2);
+        ASTnode *t = NewNode_OP("=");
         addChild($$, t);
         addChild($$, $3);
     }
@@ -265,131 +265,131 @@ Else_expression:
         // 由于形式一样，之后操作都一样！
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP($2);
+        ASTnode *t = NewNode_OP("||");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression LOG_AND Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP($2);
+        ASTnode *t = NewNode_OP("&&");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression BIT_OR Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP($2);
+        ASTnode *t = NewNode_OP("|");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression BIT_XOR Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP($2);
+        ASTnode *t = NewNode_OP("^");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression BIT_AND Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP($2);
+        ASTnode *t = NewNode_OP("&");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression LL Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP($2);
+        ASTnode *t = NewNode_OP("<");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression LE Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP($2);
+        ASTnode *t = NewNode_OP("<=");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression GG Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP($2);
+        ASTnode *t = NewNode_OP(">");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression GE Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP($2);
+        ASTnode *t = NewNode_OP(">=");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression EQ Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP($2);
+        ASTnode *t = NewNode_OP("==");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression NE Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP($2);
+        ASTnode *t = NewNode_OP("!=");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression PLUS Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP($2);
+        ASTnode *t = NewNode_OP("+");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression MINUS Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP($2);
+        ASTnode *t = NewNode_OP("-");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression MUL Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP($2);
+        ASTnode *t = NewNode_OP("*");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression DIV Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP($2);
+        ASTnode *t = NewNode_OP("/");
         addChild($$, t);
         addChild($$, $3);
     }
     | Else_expression REG Else_expression {
         $$ = NewNode_NT("Else_expression");
         addChild($$, $1);
-        ASTnode *t = NewNode_OP($2);
+        ASTnode *t = NewNode_OP("%");
         addChild($$, t);
         addChild($$, $3);
     }
     | LOG_NOT Else_expression {
         $$ = NewNode_NT("Else_expression");
-        ASTnode *t = NewNode_OP($1);
+        ASTnode *t = NewNode_OP("!");
         addChild($$, t);
         addChild($$, $2);
     }
     | BIT_NOT Else_expression {
         $$ = NewNode_NT("Else_expression");
-        ASTnode *t = NewNode_OP($1);
+        ASTnode *t = NewNode_OP("~");
         addChild($$, t);
         addChild($$, $2);
     }
     | MINUS Else_expression %prec NEG {
         // 使用%prec 指定此时优先使用负号
         $$ = NewNode_NT("Else_expression");
-        ASTnode *t = NewNode_OP($1);
+        ASTnode *t = NewNode_OP("-");
         addChild($$, t);
         addChild($$, $2);
     }     
