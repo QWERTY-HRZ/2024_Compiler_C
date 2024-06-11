@@ -43,7 +43,7 @@ ASTNode* addChild(ASTNode* parent, ASTNode* child);
 // test - 打印AST
 void AST_Traverse(ASTNode* root, int depth);
 // 判断两字符串是否相等 相等返回1 否则返回0
-int Cmp_STR(char *str1, char *str2);
+int Str_isEqual(char *str1, char *str2);
 
 void printAST(ASTNode * root,int depth);
 int Ident_Count(ASTNode * statements_node);
