@@ -75,6 +75,6 @@ void AST_Traverse(ASTNode* root, int depth){
 
 	for(int i = 0 ; i < root->child_count ; i++)
         // 自上而下 按深度递归
-		printAST(root->children[i],depth+1);
+		AST_Traverse(root->children[i],depth+1);
 	return ;
 }
