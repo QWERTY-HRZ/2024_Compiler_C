@@ -18,7 +18,7 @@ else()
     message("Error: bison not found!")
 endif()
 
-# 设置源代码和生成文件的目录
+# 设置源代码目录 / 生成文件目录
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
