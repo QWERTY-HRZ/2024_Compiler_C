@@ -61,7 +61,7 @@ void AST_Traverse(ASTNode* root, int depth){
 		printf("- ");
 	if(root == NULL)
 	{
-		printf("EMPTY\n");
+		printf("EMPTY!\n");
 		return ;
 	}
 	printf("%s",root->type);

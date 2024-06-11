@@ -125,12 +125,7 @@ function_definition:
         addChild($$, t);
         t = NewNode_Ident($2);
         addChild($$, t);
-        // 对若产生式为空 填入空节点
-        if($4 == NULL) {
-            t = NewNode_NT("empty");
-            addChild($$, t);
-        }
-        else addChild($$, $4);
+        addChild($$, $4);
         addChild($$, $7);
     }
     | TOKEN_VOID IDENTIFIER L_PAR Def_list R_PAR L_BRA Statement R_BRA {
@@ -139,12 +134,79 @@ function_definition:
         addChild($$, t);
         t = NewNode_Ident($2);
         addChild($$, t);
-        if($4 == NULL) {
-            t = NewNode_NT("empty");
-            addChild($$, t);
-        }
-        else addChild($$, $4);
+        addChild($$, $4);
         addChild($$, $7);
+    }
+    | TOKEN_INT IDENTIFIER L_PAR R_PAR L_BRA Statement R_BRA {
+        $$ = NewNode_NT("function_definition"); 
+        ASTNode *t = NewNode_Type("type", "int"); 
+        addChild($$, t);
+        t = NewNode_Ident($2);
+        addChild($$, t);
+        // 函数参数列表为空时
+        t = NewNode_NT("empty");
+        addChild($$, t);
+        addChild($$, $6);
+    }
+    | TOKEN_VOID IDENTIFIER L_PAR R_PAR L_BRA Statement R_BRA {
+        $$ = NewNode_NT("function_definition"); 
+        ASTNode *t = NewNode_Type("type", "void"); 
+        addChild($$, t);
+        t = NewNode_Ident($2);
+        addChild($$, t);
+        // 函数参数列表为空时
+        t = NewNode_NT("empty");
+        addChild($$, t);
+        addChild($$, $6);
+    }
+    | TOKEN_INT IDENTIFIER L_PAR Def_list R_PAR L_BRA R_BRA {
+        // 消除规约冲突！
+        $$ = NewNode_NT("function_definition"); 
+        ASTNode *t = NewNode_Type("type", "int"); 
+        addChild($$, t);
+        t = NewNode_Ident($2);
+        addChild($$, t);
+        addChild($$, $4);
+        // 大括号内为空时
+        t = NewNode_NT("empty");
+        addChild($$, t);
+    }
+    | TOKEN_VOID IDENTIFIER L_PAR Def_list R_PAR L_BRA R_BRA {
+        $$ = NewNode_NT("function_definition"); 
+        ASTNode *t = NewNode_Type("type", "void"); 
+        addChild($$, t);
+        t = NewNode_Ident($2);
+        addChild($$, t);
+        addChild($$, $4);
+        // 大括号内为空时
+        t = NewNode_NT("empty");
+        addChild($$, t);
+    }
+    | TOKEN_INT IDENTIFIER L_PAR R_PAR L_BRA R_BRA {
+        $$ = NewNode_NT("function_definition"); 
+        ASTNode *t = NewNode_Type("type", "int"); 
+        addChild($$, t);
+        t = NewNode_Ident($2);
+        addChild($$, t);
+        // 函数参数列表为空时
+        t = NewNode_NT("empty");
+        addChild($$, t);
+        // 大括号内为空时
+        t = NewNode_NT("empty");
+        addChild($$, t);
+    }
+    | TOKEN_VOID IDENTIFIER L_PAR R_PAR L_BRA R_BRA {
+        $$ = NewNode_NT("function_definition"); 
+        ASTNode *t = NewNode_Type("type", "void"); 
+        addChild($$, t);
+        t = NewNode_Ident($2);
+        addChild($$, t);
+        // 函数参数列表为空时
+        t = NewNode_NT("empty");
+        addChild($$, t);
+        // 大括号内为空时
+        t = NewNode_NT("empty");
+        addChild($$, t);
     }
     ;
 
@@ -511,8 +573,7 @@ int main(int argc, char** argv)
 	/* 将bison指向文件头 */
     yyrestart(f); 
     yyparse();
-    printf("root_child = %d\n",Root->child_count);
-	AST_Traverse(Root, 0);
+	/* AST_Traverse(Root, 0); */
 	printf(".intel_syntax noprefix\n");
 	printf("\n.data\nformat_str:\n.asciz \"%%d\\n\"\n.extern printf\n");
 	/* if(strcmp(Root->type,"program")==0)
