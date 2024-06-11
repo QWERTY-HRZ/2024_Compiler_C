@@ -47,6 +47,8 @@ ASTNode* addChild(ASTNode* parent, ASTNode* child) {
     parent->child_count++;
     // test
     printf("addChild! parent_type: %s, child_type: %s\n", parent->type, child->type);
+    if(child->name != NULL) printf("child_name: %s\n", child->name);
+
     return (parent);
 }
 

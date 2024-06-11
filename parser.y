@@ -173,35 +173,24 @@ function_definition:
 
 Def_list:
     {/* 函数参数列表，可为空 */}
-    | TOKEN_INT IDENTIFIER Def_others {
+    | Def_list COMMA Def_others {
         $$ = NewNode_NT("Def_list");
-        ASTNode *t = NewNode_Type("type","int");
-        addChild($$, t);
-
-        t = NewNode_Ident($2);
-        addChild($$, t);
-        if($3 == NULL) {
-            t = NewNode_NT("empty");
-            addChild($$, t);
-        }
-        else addChild($$, $3);
+        addChild($$, $1);
+        addChild($$, $3);
+    }
+    | Def_others {
+        $$ = NewNode_NT("Def_list");
+        addChild($$, $1);
     }
     ;
 
 Def_others:
-    {/* 函数其他参数，可为空 */}
-    | COMMA TOKEN_INT IDENTIFIER Def_others {
+    TOKEN_INT IDENTIFIER {
         $$ = NewNode_NT("Def_others");
         ASTNode *t = NewNode_Type("type","int");
         addChild($$, t);
-
-        t = NewNode_Ident($3);
+        t = NewNode_Ident($2);
         addChild($$, t);
-        if($4 == NULL) {
-            t = NewNode_NT("empty");
-            addChild($$, t);
-        }
-        else addChild($$, $4);
     }
     ;
 
