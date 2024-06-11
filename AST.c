@@ -77,3 +77,7 @@ void AST_Traverse(ASTNode* root, int depth){
 		AST_Traverse(root->children[i],depth+1);
 	return ;
 }
+// 判断两字符串是否相等
+int Cmp_STR(char *str1, char *str2){
+    return (strcmp(str1, str2));
+}

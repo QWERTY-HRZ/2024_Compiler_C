@@ -31,5 +31,5 @@ ASTNode* NewNode_OP(char* name);
 ASTNode* addChild(ASTNode* parent, ASTNode* child);
 // test - 打印AST
 void AST_Traverse(ASTNode* root, int depth);
-
+int Cmp_STR(char *str1, char *str2);
 #endif // AST_H

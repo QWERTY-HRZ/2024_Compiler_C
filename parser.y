@@ -48,7 +48,7 @@ void yyerror(char *s);
 
 /* 定义 - 终结符数据类型 */
 /* 终结符 - 关键字 */
-%token TOKEN_INT TOKEN_VOID TOKEN_RETURN
+%token TOKEN_INT TOKEN_VOID TOKEN_RETURN PRINT
 /* 终结符 - 常量 */
 %token <Value> CONSTANT
 /* 已有常量：整数序列 */
@@ -119,13 +119,32 @@ program:
     ;
 
 function_definition:
-    Func_type IDENTIFIER L_PAR Def_list R_PAR L_BRA Statement R_BRA {
+    TOKEN_INT IDENTIFIER L_PAR Def_list R_PAR L_BRA Statement R_BRA {
+        // 消除规约冲突！
         $$ = NewNode_NT("function_definition"); 
-        addChild($$, $1);
+        ASTNode *t = NewNode_Type("type", "int"); 
+        addChild($$, t);
         ASTNode *t = NewNode_Ident($2);
         addChild($$, t);
-        // 跳过括号 大括号
-        if($4 != NULL) addChild($$, $4);
+        // 对若产生式为空 填入空节点
+        if($4 == NULL) {
+            t = NewNode_NT("empty");
+            addChild($$, t);
+        }
+        else addChild($$, $4);
+        addChild($$, $7);
+    }
+    | TOKEN_VOID IDENTIFIER L_PAR Def_list R_PAR L_BRA Statement R_BRA {
+        $$ = NewNode_NT("function_definition"); 
+        ASTNode *t = NewNode_Type("type", "void"); 
+        addChild($$, t);
+        ASTNode *t = NewNode_Ident($2);
+        addChild($$, t);
+        if($4 == NULL) {
+            t = NewNode_NT("empty");
+            addChild($$, t);
+        }
+        else addChild($$, $4);
         addChild($$, $7);
     }
     ;
@@ -159,7 +178,11 @@ Def_list:
         addChild($$, $1);
         ASTNode *t = NewNode_Ident($2);
         addChild($$, t);
-        if($3 != NULL) addChild($$, $3);
+        if($3 == NULL) {
+            t = NewNode_NT("empty");
+            addChild($$, t);
+        }
+        else addChild($$, $3);
     }
     ;
 
@@ -170,7 +193,11 @@ Def_others:
         addChild($$, $2);
         ASTNode *t = NewNode_Ident($3);
         addChild($$, t);
-        if($4 != NULL) addChild($$, $4);
+        if($4 == NULL) {
+            t = NewNode_NT("empty");
+            addChild($$, t);
+        }
+        else addChild($$, $4);
     }
     ;
 
@@ -206,6 +233,12 @@ statement:
         $$ = NewNode_NT("statement");
         addChild($$, $1);
     }
+    | PRINT L_PAR Else_expression R_PAR SEMIC {
+        $$ = NewNode_NT("statement");
+        ASTnode * t = NewNode_Type("keyword","print");
+        addChild($$, t);
+		addChild($$, $3);
+    }
     ;
 
 Declaration:
@@ -215,8 +248,16 @@ Declaration:
         addChild($$, $1);
         ASTNode *t = NewNode_Ident($2);
         addChild($$, t);
-        if($3 != NULL) addChild($$, $3);
-        if($4 != NULL) addChild($$, $4);                
+        if($3 == NULL) {
+            t = NewNode_NT("empty");
+            addChild($$, t);
+        }
+        else addChild($$, $3);
+        if($4 == NULL) {
+            t = NewNode_NT("empty");
+            addChild($$, t);
+        }
+        else addChild($$, $4);                
     }
     ;
 
@@ -236,8 +277,16 @@ Ident_list:
         $$ = NewNode_NT("Ident_list");
         ASTNode *t = NewNode_Ident($2);
         addChild($$, t);
-        if($3 != NULL) addChild($$, $3);
-        if($4 != NULL) addChild($$, $4);        
+        if($3 == NULL) {
+            t = NewNode_NT("empty");
+            addChild($$, t);
+        }
+        else addChild($$, $3);
+        if($4 == NULL) {
+            t = NewNode_NT("empty");
+            addChild($$, t);
+        }
+        else addChild($$, $4);        
     }
     ;
 
@@ -440,7 +489,11 @@ Function_call:
         $$ = NewNode_NT("Function_call");
         ASTNode *t = NewNode_Ident($1);
         addChild($$, t);
-        if($3 != NULL) addChild($$, $3);  
+        if($3 == NULL) {
+            t = NewNode_NT("empty");
+            addChild($$, t);
+        }
+        else addChild($$, $3);  
     }
     ;
 
@@ -449,7 +502,11 @@ Call_list:
     | All_expression Call_others {
         $$ = NewNode_NT("Call_list");
         addChild($$, $1);
-        if($2 != NULL) addChild($$, $2);
+        if($2 == NULL) {
+            t = NewNode_NT("empty");
+            addChild($$, t);
+        }
+        else addChild($$, $2);
     }
     ;
 
@@ -458,7 +515,11 @@ Call_others:
     | COMMA All_expression Call_others {
         $$ = NewNode_NT("Call_others");
         addChild($$, $2);
-        if($3 != NULL) addChild($$, $3);        
+        if($3 == NULL) {
+            t = NewNode_NT("empty");
+            addChild($$, t);
+        }
+        else addChild($$, $3);        
     }
     ;
 

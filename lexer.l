@@ -45,7 +45,9 @@
 "{"                 { return L_BRA; }
 "}"                 { return R_BRA; }
 
-[ \t\n]            { /* 忽略空白符 */ }
+"println_int"       { return PRINT; }
+
+[ \t\n]+            { /* 忽略空白符 */ }
 .                   { printf("Unmatched Characters: %s\n", yytext); }
 
 %%
