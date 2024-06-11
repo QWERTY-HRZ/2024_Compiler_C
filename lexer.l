@@ -13,7 +13,7 @@
 "void"              { return TOKEN_VOID; }
 "main"              { return TOKEN_MAIN; /* 没用上 */}
 "return"            { return TOKEN_RETURN; }
-[0-9]+              { yylval.Value = atoi(yytext); return CONSTANT; }
+[0-9]+              { /* 此处用parser.y union中的数据类型 */yylval.Value = atoi(yytext); return CONSTANT; }
 [A-Za-z_][A-Za-z0-9_]*   { yylval.Name=strdup(yytext); return IDENTIFIER; }
 
 "="                 { return ASSIGN; }
