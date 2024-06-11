@@ -4,9 +4,10 @@
 #include <string.h>
 // 引入头文件
 #include "AST.h"
-// #include "parser.tab.h"
+#include "parser.tab.h"
 int yylex(void);
-void yyerror(char *s);
+void yyerror(char *);
+void yyrestart(FILE *);
 %}
 
 /* 定义 - 数据类型集合 */
@@ -21,7 +22,7 @@ void yyerror(char *s);
 ASTNode* Root;
 // 调用flex的词法分析函数
 extern int yylex();
-void yyerror(const char *s);
+void yyerror(char *s);
 %}
 
 /* 定义 - 非终结符数据类型，均为节点 */
@@ -254,7 +255,7 @@ Assignment_expression:
         $$ = NewNode_NT("Assignment_expression");
         ASTNode *t = NewNode_Ident($1);
         addChild($$, t);
-        ASTNode *t = NewNode_OP("=");
+        t = NewNode_OP("=");
         addChild($$, t);
         addChild($$, $3);
     }
@@ -462,7 +463,7 @@ Call_others:
 /* main函数 */
 int main(int argc, char** argv)
 {	
-	root=NewNode_NT("root");
+	Root = NewNode_NT("Root");
 	if (argc <= 1) return 1; 
     /* 读取文件 */
         FILE* f = fopen(argv[1], "r"); 
@@ -470,15 +471,15 @@ int main(int argc, char** argv)
 	/* 将bison指向文件头 */
        yyrestart(f); 
        yyparse(); 
-	AST_Traverse(root, 0);
+	AST_Traverse(Root, 0);
 	printf(".intel_syntax noprefix\n");
 	printf("\n.data\nformat_str:\n.asciz \"%%d\\n\"\n.extern printf\n");
-	/* if(strcmp(root->type,"program")==0)
-		if(main_exsist(root)==1)
+	/* if(strcmp(Root->type,"program")==0)
+		if(main_exsist(Root)==1)
 		{	
-			printGlobalName(root);
+			printGlobalName(Root);
 			printf(".text\n\n");
-			func_define_list(root);
+			func_define_list(Root);
 		}
 		else printf(".global main\n.text\n\n#ASTerror\nmain:\npush ebp\nmov ebp, esp\nsub esp, 4\nleave\nret\n");
 	else printf(".global main\n.text\n\n#ASTerror\nmain:\npush ebp\nmov ebp, esp\nsub esp, 4\nleave\nret\n"); */
