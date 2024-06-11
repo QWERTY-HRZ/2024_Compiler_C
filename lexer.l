@@ -10,10 +10,12 @@
 
 %%
 
-"int"               { return TOKEN_INT; }
-"void"              { return TOKEN_VOID; }
+"int"               { /* 以下为关键字 */ return TOKEN_INT; }
+"println_int"       { return PRINT; }
 "return"            { return TOKEN_RETURN; }
-[0-9]+              { /* 此处用parser.y union中的数据类型 */yylval.Value = atoi(yytext); return CONSTANT; }
+"void"              { return TOKEN_VOID; }
+
+[0-9]+              { /* 此处用parser.y union中的数据类型 */ yylval.Value = atoi(yytext); return CONSTANT; }
 [A-Za-z_][A-Za-z0-9_]*   { yylval.Name=strdup(yytext); return IDENTIFIER; }
 
 "="                 { return ASSIGN; }
@@ -45,7 +47,6 @@
 "{"                 { return L_BRA; }
 "}"                 { return R_BRA; }
 
-"println_int"       { return PRINT; }
 
 [ \t\n]+            { /* 忽略空白符 */ }
 .                   { printf("Unmatched Characters: %s\n", yytext); }

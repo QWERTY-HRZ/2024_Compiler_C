@@ -30,7 +30,7 @@ void yyerror(char *s);
 %type <ASTN> program
 %type <ASTN> function_definition
 /* %type <ASTN> Func_type */
-%type <ASTN> Ident_type
+/* %type <ASTN> Ident_type */
 %type <ASTN> Def_list
 %type <ASTN> Def_others
 %type <ASTN> Statement
@@ -162,21 +162,23 @@ function_definition:
     }
     ; */
 
-Ident_type:
+/* Ident_type:
     TOKEN_INT {
-        /* 变量数据类型 */
+        // 变量数据类型
         $$ = NewNode_NT("Ident_type");
         ASTNode *t = NewNode_Type("type", "int"); 
         addChild($$, t);
     }
-    ;
+    ; */
 
 Def_list:
     {/* 函数参数列表，可为空 */}
-    | Ident_type IDENTIFIER Def_others {
+    | TOKEN_INT IDENTIFIER Def_others {
         $$ = NewNode_NT("Def_list");
-        addChild($$, $1);
-        ASTNode *t = NewNode_Ident($2);
+        ASTNode *t = NewNode_Type("type","int");
+        addChild($$, t);
+
+        t = NewNode_Ident($2);
         addChild($$, t);
         if($3 == NULL) {
             t = NewNode_NT("empty");
@@ -188,10 +190,12 @@ Def_list:
 
 Def_others:
     {/* 函数其他参数，可为空 */}
-    | COMMA Ident_type IDENTIFIER Def_others {
+    | COMMA TOKEN_INT IDENTIFIER Def_others {
         $$ = NewNode_NT("Def_others");
-        addChild($$, $2);
-        ASTNode *t = NewNode_Ident($3);
+        ASTNode *t = NewNode_Type("type","int");
+        addChild($$, t);
+
+        t = NewNode_Ident($3);
         addChild($$, t);
         if($4 == NULL) {
             t = NewNode_NT("empty");
@@ -242,11 +246,12 @@ statement:
     ;
 
 Declaration:
-    Ident_type IDENTIFIER Opt_init Ident_list SEMIC {
+    TOKEN_INT IDENTIFIER Opt_init Ident_list SEMIC {
         /* 变量声明语句 */
         $$ = NewNode_NT("Declaration");
-        addChild($$, $1);
-        ASTNode *t = NewNode_Ident($2);
+        ASTNode *t = NewNode_Type("type","int");
+        addChild($$, t);
+        t = NewNode_Ident($2);
         addChild($$, t);
         if($3 == NULL) {
             t = NewNode_NT("empty");
