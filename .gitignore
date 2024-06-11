@@ -1,0 +1,7 @@
+# 忽略的路径名
+/build
+/test&ans
+/.vscode
+# 忽略的文件类型
+*.md
+*.pdf
