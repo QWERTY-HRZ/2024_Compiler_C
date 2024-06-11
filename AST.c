@@ -3,6 +3,7 @@
 ASTNode* NewNode_NT(char* type) {
     ASTNode* node = (ASTNode*)malloc(sizeof(ASTNode));
     node->type = strdup(type);
+    node->name = "";
     node->value = 0;
     node->child_count = 0;
     return node;
@@ -29,6 +30,7 @@ ASTNode* NewNode_Ident(char* name){
 ASTNode* NewNode_Const(int value){
     ASTNode* node = (ASTNode*)malloc(sizeof(ASTNode));
     node->type = strdup("Const");
+    node->name = "";
     node->value = value;
     node->child_count = 0;
     return node;        
@@ -47,7 +49,7 @@ ASTNode* addChild(ASTNode* parent, ASTNode* child) {
     parent->child_count++;
     // test
     printf("addChild! parent_type: %s, child_type: %s\n", parent->type, child->type);
-    if(child->name != NULL) printf("child_name: %s\n", child->name);
+    if(strcmp(child->name, "")) printf("child_name: %s\n", child->name);
 
     return (parent);
 }
