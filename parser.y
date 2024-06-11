@@ -48,7 +48,7 @@ void yyerror(char *s);
 
 /* 定义 - 终结符数据类型 */
 /* 终结符 - 关键字 */
-%token TOKEN_INT TOKEN_VOID TOKEN_MAIN TOKEN_RETURN
+%token TOKEN_INT TOKEN_VOID TOKEN_RETURN
 /* 终结符 - 常量 */
 %token <Value> CONSTANT
 /* 已有常量：整数序列 */
