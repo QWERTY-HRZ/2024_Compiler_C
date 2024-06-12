@@ -22,11 +22,7 @@ typedef struct map_ident
 {
 	char * identifier_name;
 	int stackorder;
-}Map_Ident ;
-Map_Ident varmap[100];
-
-int Map_Order = 1;
-int Map_Top = 0;
+} Map_Ident ;
 
 // 新节点 - 非终结符
 ASTNode* NewNode_NT(char* type);
@@ -49,6 +45,7 @@ int Str_isEqual(char *str1, char *str2);
 int Ident_Count(ASTNode * statements_node);
 int Ident_Init(ASTNode * var_declare_list_node);
 int Ident_Lookup(char * name);
+int isMain(ASTNode * program_node);
 void Pt_Global(ASTNode * program_node);
 int Args_Init(ASTNode * arg_define_list);
 void Deal_Func_Def(ASTNode * program_node);
@@ -57,4 +54,5 @@ void Deal_Expression(ASTNode * expression);
 void Call_Func(ASTNode * expression);
 int Args_Push(ASTNode* arg_call_list);
 void Var_Assign(ASTNode * var_declare_list);
+void Main_Core(ASTNode * Root);
 #endif // AST_H

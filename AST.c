@@ -1,5 +1,9 @@
 #include "AST.h"
 
+Map_Ident varmap[100];
+int Map_Order = 1;
+int Map_Top = 0;
+
 ASTNode* NewNode_NT(char* type) {
     ASTNode* node = (ASTNode*)malloc(sizeof(ASTNode));
     node->type = strdup(type);
@@ -114,7 +118,7 @@ int Ident_Init(ASTNode * var_declare_list_node)
 	Map_Ident temp;
 	ASTNode * p=var_declare_node->children[0];
 	temp.identifier_name=strdup(p->name);
-	temp.stackorder=Map_Order;
+	temp.stackorder = Map_Order;
 	varmap[Map_Top]=temp;
 	Map_Order++;
 	Map_Top++;
@@ -151,22 +155,6 @@ void Deal_Func_Def(ASTNode * program_node)
 		Deal_Statement(func_define_node->children[3]);
 	printf("leave\nret\n");
 	printf("\n\n");
-	
-}
-int main_exsist(ASTNode * program_node)
-{
-	ASTNode * func_define_node=program_node->children[0];
-	int exsist=0;
-	if(Str_isEqual(func_define_node->type,"program"))
-	{
-		exsist=main_exsist(func_define_node);
-		func_define_node=program_node->children[1];
-	}
-	if(Str_isEqual(func_define_node->children[1]->name,"main"))
-		return 1;
-	else
-		return exsist;
-	
 	
 }
 int Args_Init(ASTNode * arg_define_list)
@@ -444,6 +432,21 @@ int Str_isEqual(char *str1, char *str2){
     return (!strcmp(str1, str2));
 }
 
+int isMain(ASTNode * program_node)
+{
+	ASTNode * func_define_node=program_node->children[0];
+	int exsist=0;
+	if(strcmp(func_define_node->type,"program")==0)
+	{
+		exsist=isMain(func_define_node);
+		func_define_node=program_node->children[1];
+	}
+	if(strcmp(func_define_node->children[1]->name,"main")==0)
+		return 1;
+	else
+		return exsist;
+}
+
 void Pt_Global(ASTNode * program_node)
 {
 	ASTNode * func_define_node=program_node->children[0];
@@ -453,4 +456,17 @@ void Pt_Global(ASTNode * program_node)
 		func_define_node=program_node->children[1];
 	}
 	printf(".global %s\n",func_define_node->children[1]->name);
+}
+
+void Main_Core(ASTNode * Root){
+    printf(".intel_syntax noprefix\n");
+	printf("\n.data\nformat_str:\n.asciz \"%%d\\n\"\n.extern printf\n");
+	if(strcmp(Root->type,"program")==0)
+		if(isMain(Root)) {	
+			Pt_Global(Root);
+			printf(".text\n\n");
+			Deal_Func_Def(Root);
+		}
+        else printf(".global main\n.text\n\n#ASTerror\nmain:\npush ebp\nmov ebp, esp\nsub esp, 4\nleave\nret\n");
+    else printf(".global main\n.text\n\n#ASTerror\nmain:\npush ebp\nmov ebp, esp\nsub esp, 4\nleave\nret\n");
 }

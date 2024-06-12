@@ -4,7 +4,7 @@
 #include <string.h>
 // 引入头文件
 #include "AST.h"
-#include "parser.tab.h"
+
 // 调用flex内置函数
 int yylex(void);
 void yyerror(char *);
@@ -294,14 +294,14 @@ statement:
 	{
 		$$ = NewNode_NT("statement");
 		ASTNode * t = NewNode_NT("new_block");
-		addchildren($$, t);
-		addchildren($$, $2);
+		addChild($$, t);
+		addChild($$, $2);
 	}
     | SEMIC
 	{
 		$$ = NewNode_NT("statement");
 		ASTNode * t = NewNode_NT("empty");
-		addchildren($$, t);
+		addChild($$, t);
 	}
     ;
 
@@ -586,18 +586,8 @@ int main(int argc, char** argv)
     yyrestart(f); 
     /* 生成分析树 */
     yyparse();
-	/* AST_Traverse(Root, 0); */
-	printf(".intel_syntax noprefix\n");
-	printf("\n
-            .data\nformat_str:\n
-            .asciz \"%%d\\n\"\n
-            .extern printf\n");
-	if(strcmp(Root->type,"program")==0)
-		if(main_exsist(Root) == 1) {	
-			Pt_Global(Root);
-			printf(".text\n\n");
-			Deal_Func_Def(Root);
-		}
+	AST_Traverse(Root, 0);
+	Main_Core(Root);
     return 0; 
 }
 
